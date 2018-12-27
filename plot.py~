@@ -1,0 +1,17 @@
+
+# Plotting tools for statistics
+
+import matplotlib.pyplot as plt
+def normal_plot(mu,sigma,x=None):
+    """
+    One-dimensional normal distribution plot (scalar mean, and var)
+    mu - mean of the normal distribution (scalar)
+    var - variance of the normal distribution (scalar)
+    
+    Shows a matplotlib plot on call
+    """
+
+    if (x == None):
+        x = np.linspace(-10,10,100)
+    else:
+        

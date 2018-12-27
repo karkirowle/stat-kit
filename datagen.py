@@ -58,23 +58,24 @@ def lorentz_attractor(tmax=100,res=0.01):
 	
 	return t,x,y,z
 	
-def repressilator(tmax=100,res=0.01):
+def repressilator(tmax=100,res=0.01,noise=0.0001):
 	"""
 	Generates the X,Y,Z time series for a repressilator.
 	
 	
 	"""
 
+        
 	def rep_model(all,t):
-		d = 0.1
-		a = 0.3
-		b = 0.2
-		c = 0.4
+		d = 1
+		a = 40
+		b = 40
+		c = 40
 		x,y,z = all
 
-		dxdt = a /(1 + z)**2 - d * x 
-		dydt = b/(1 + x)**2 - d * y
-		dzdt = c/(1 + y)**2 - d * z 
+		dxdt = a/(1 + z)**4 - d * x + noise*np.sqrt(res)*np.random.normal(0,1) 
+		dydt = b/(1 + x)**4 - d * y + noise*np.sqrt(res)*np.random.normal(0,1) 
+		dzdt = c/(1 + y)**4 - d * z + noise*np.sqrt(res)*np.random.normal(0,1) 
 		
 		return dxdt,dydt,dzdt
 	
