@@ -12,7 +12,9 @@ import plot as p
 
 X,Y, W = datagen.linear_system(1,0.01,100)
 
-w_pred = l.linear_regression(X,Y,gradient=False)
+w_pred_adam = l.linear_regression(X,Y,l2=0,gradient=True)
+w_pred_ne = l.linear_regression(X,Y,l2=0,gradient=False)
+
 
 # Bayesian Linear Regression
 alpha = 1
@@ -29,7 +31,8 @@ while True:
        mu = mu_new
        alpha,gamma,beta = l.evidence_iteration(alpha,gamma,beta,X,Y,mu)
 
-print("Normal Equation", w_pred)
+print("Normal Equation", w_pred_ne)
+print("Normal Equation Adam", w_pred_adam)
 print("Bayesian Estimated", mu)
 print("True", W)
 
