@@ -2,6 +2,7 @@
 
 
 import numpy as np
+import optimiser as opt
 
 def linear_regression(predictor,response,l2=0,gradient=False):
 	"""
@@ -39,7 +40,6 @@ def cost_func(X,Y,W,alpha,beta,q):
         alpha - regulariser
         beta
         """
-        print(q)
         assert q >= 1, "Uninterpretable Minkowski space"
 
         cost_val = beta/2 * np.sum((X.dot(W)- Y)**q) + alpha/2 * W.T.dot(W)
@@ -54,7 +54,7 @@ def cost_func(X,Y,W,alpha,beta,q):
         # TODO: This probably does not work for q = 1
         return cost_val,grad,hessian
 
-def gradient_descent(X,Y,mu=0.01,convergence=0.1):
+def gradient_descent(X,Y,mu=0.01,convergence=0.001):
         """
         Solves the least squares problem with a naive gradient descent solution.
         The cost function is strictly Euclidean, so it imposes implicit
@@ -63,11 +63,11 @@ def gradient_descent(X,Y,mu=0.01,convergence=0.1):
         N = X.shape[1]
         P = Y.shape[1]
         W = np.random.normal(0,1,(N,P))
-	
-	# Sum of squared error loss function - implicit Gaussainity imposed
+        adam = opt.AdamOpt(W)
+        # Sum of squared error loss function - implicit Gaussainity imposed
         error,grad,hessian = cost_func(X,Y,W,1,0,2)
         while (error[0] > convergence):
-                W = W - mu * grad
+                W = adam.update(grad)
                 error,grad,hessian = cost_func(X,Y,W,1,0,2)
 
         return W
