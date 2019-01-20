@@ -1,0 +1,129 @@
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+
+# Data generator
+
+
+def linear_system(order,noise,timesteps):
+        """
+        Generates a linear system with a given order (number of coefficients)
+        and given level of noise (variance of a Gaussian, and the signal is some set number of timesteps.
+        """
+        
+        # The weights of the system are sampled from a Gaussian distribution
+        W = np.random.normal(0,1,(order,1))
+
+        # Random sampled time series are used as X
+        X = np.random.normal(0,0.01,(timesteps,order))
+        
+        Y = X.dot(W) + np.random.normal(0,noise,(timesteps,1))
+        
+        return X,Y,W
+        
+def lorentz_attractor(tmax=100,res=0.01):
+        """
+        Generates the X,Y,Z time series for a Lorentz attractor.
+        tmax - gives the maximum time step for the ODE solver
+        res - time resolution of the simulation
+        
+        """
+
+        def lorenz_model(all,t):
+                sigma = 10
+                beta = 2.667    
+                ro = 28
+                
+                x,y,z = all
+
+                dxdt = -sigma * (x - y)
+                dydt = ro * x - y - x*z 
+                dzdt = x * y - beta * z
+                
+                return dxdt,dydt,dzdt
+        
+        # Lorenz paramters and initial conditions
+        
+        
+        # Maximum time point and total number of time points
+        n = int(np.ceil(100 / res))
+        # solve ODE
+        t = np.linspace(0,tmax, n)
+        
+        time_series = odeint(lorenz_model,(0,1,1.05),t)
+        x,y,z = time_series.T
+        print(x.shape)
+        print(y.shape)
+        print(z.shape)
+        
+        return t,x,y,z
+        
+def repressilator(tmax=100,fs = 100,noise=0.0001):
+        """
+        Generates the X,Y,Z time series for a repressilator.
+        
+        Parameters:
+        -------------
+        tmax - maximum time
+        fs - sampling frequency
+        noise - amount of Gaussian (Wiener) noise added
+
+        Return:
+        -------
+        3 time series of shape (tmax*fs,)
+        """
+
+        res = 1 / fs
+        print(res)
+        def rep_model(all,t):
+                d = 1
+                a = 40
+                b = 40
+                c = 40
+                x,y,z = all
+
+                dxdt = a/(1 + z)**4 - d * x + noise*np.sqrt(res)*np.random.normal(0,1) 
+                dydt = b/(1 + x)**4 - d * y + noise*np.sqrt(res)*np.random.normal(0,1) 
+                dzdt = c/(1 + y)**4 - d * z + noise*np.sqrt(res)*np.random.normal(0,1) 
+                
+                return dxdt,dydt,dzdt
+        
+        # Lorenz paramters and initial conditions
+        
+        
+        # Maximum time point and total number of time points
+        n = int(np.ceil(100 / res))
+        # solve ODE
+        t = np.linspace(0,tmax, n)
+
+        print(n/tmax)
+        time_series = odeint(rep_model,(0.1,0.2,0.3),t)
+        x,y,z = time_series.T
+        print(x.shape)
+        print(y.shape)
+        print(z.shape)
+        
+        
+        return t,x,y,z
+
+def example_sin(w0 = 20, tmax = 100, fs = 100):
+        """
+        Generates a sine wave according to the formula
+        y = sin(w0t)
+
+        Parameters:
+        -----------
+        w0 - angular freqency
+
+        Returns:
+        --------
+        t - np ndarray - (tmax*fs,) time
+        y - np ndarray - (tmax*fs,) sine wave
+        """
+        
+        n = fs * tmax
+        t = np.linspace(0,tmax, n)
+        y = np.sin(w0*t)
+
+        return t, y
+        
